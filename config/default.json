@@ -1,0 +1,8 @@
+{
+  "dLive": {
+    "roomId": "u25b2x", // Update this to the LINO Username that displays on the earnings tab
+    "websocketUrl": "wss://graphigostream.prd.dlive.tv",
+    "httpsUrl": "https://graphigo.prd.dlive.tv"
+  }
+}
+
