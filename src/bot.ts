@@ -1,14 +1,25 @@
 import * as WebSocket from 'ws';
 import * as Config from 'config';
+import SimpleTTS = require("simpletts");
 
-
+interface Voice {
+    name: string;
+    gender: "female" | "male";
+}
+ 
+interface Options {
+    text: string;
+    volume?: number;
+    speed?: number;
+    voice?: Voice | string;
+}
 
 (async () => {
   //--------------------------------------------
   //            MAIN
   //--------------------------------------------
   const { roomId, websocketUrl} = Config.get('dLive');
-
+  const tts = new SimpleTTS();
   // Establish WS Connection:
   const ws: any = {};
   try {
@@ -55,16 +66,44 @@ import * as Config from 'config';
       if (jsonMessage.type === 'data' ) { 
         jsonMessage.payload.data.streamMessageReceived.forEach(async (message: any) => {
           if (
+            message.type === 'Message') {
+            if (message.content.indexOf('!') === 0 
+                && message.content.split('!')[1] === 'makeitrain') {
+              console.log("TIME TO MAKE IT RAIN!!   ");
+            }
+            else {
+              tts.getVoices().then((voices: Array<Voice>) => {
+                  return tts.read({
+                      "text": message.content,
+                      "voice": voices[1]
+                  });
+               
+              }).then((options: Options) => {
+                  console.log(options);
+              }).catch((err: Error) => {
+                  console.log(err);
+              });
+            }
+
+
+          }
+          else if (
             message.type === 'Gift') {
           if ( message.gift === "LEMON") {
             console.log("LEMON TIME")
           } else if ( message.gift === "ICE_CREAM") {
             console.log("ICE CREAM TIME")
           } else if ( message.gift === "DIAMOND") {
+
+
             console.log("DIAMOND TIME")
           } else if ( message.gift === "NINJAGHINI") {
+
+
             console.log("NINJAGHINI TIME")
           } else if ( message.gift === "NINJET") {
+
+
             console.log("NINJET TIME")
           }
         } else {
